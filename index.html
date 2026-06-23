@@ -3,1190 +3,532 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Luyện Ngữ Pháp Bổ Ngữ Tiếng Trung Chuyên Sâu</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Bài Tập Luyện Phát Âm Pinyin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Noto Sans SC (Hỗ trợ tiếng Trung cực đẹp) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <!-- Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'Noto Sans SC', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: {
-                            50: '#f5f3ff',
-                            100: '#ede9fe',
-                            200: '#ddd6fe',
-                            500: '#8b5cf6',
-                            600: '#7c3aed',
-                            700: '#6d28d9',
-                            800: '#5b21b6',
-                        },
-                        secondary: {
-                            50: '#f0fdf4',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        .active-tab {
-            background-color: #7c3aed;
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .pinyin-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .pinyin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(16, 185, 129, 0.2);
+        }
+        .pinyin-btn:active {
+            transform: scale(0.95);
+        }
+        .tab-active {
+            background-color: #10b981;
             color: white;
-            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
         }
-        .chinese-font {
-            font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
-        }
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
+        .custom-scrollbar::-webkit-scrollbar {
             height: 6px;
+            width: 6px;
         }
-        .custom-scroll::-webkit-scrollbar-track {
+        .custom-scrollbar::-webkit-scrollbar-track {
             background: #f1f5f9;
         }
-        .custom-scroll::-webkit-scrollbar-thumb {
+        .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
         }
-        @keyframes pulse-soft {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: .8; transform: scale(1.02); }
-        }
-        .live-pulse {
-            animation: pulse-soft 2s infinite ease-in-out;
-        }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
+<body class="p-3 md:p-6 min-h-screen flex items-center justify-center">
 
-    <div class="min-h-screen flex flex-col">
-        <!-- Top Navigation Header -->
-        <header class="bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="p-2.5 bg-gradient-to-tr from-primary-600 to-indigo-500 text-white rounded-2xl shadow-md">
-                        <i class="fa-solid fa-graduation-cap text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-extrabold tracking-tight bg-gradient-to-r from-primary-600 to-indigo-600 bg-clip-text text-transparent">HS CHINESE GRAMMAR</h1>
-                        <p class="text-xs text-slate-500 font-medium">Chuyên Đề Ngữ Pháp Bổ Ngữ Tiếng Trung (补语专题)</p>
-                    </div>
-                </div>
-                <!-- Progress & Stats Overview -->
-                <div class="flex items-center gap-6 text-sm bg-slate-50 p-2 rounded-2xl border border-slate-100">
-                    <div class="flex items-center gap-2 px-2.5">
-                        <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full"></span>
-                        <span class="text-slate-600 font-semibold">Đúng: <span id="global-correct-count" class="text-emerald-600">0</span></span>
-                    </div>
-                    <div class="w-px h-6 bg-slate-200"></div>
-                    <div class="flex items-center gap-2 px-2.5">
-                        <span class="w-2.5 h-2.5 bg-indigo-500 rounded-full"></span>
-                        <span class="text-slate-600 font-semibold">Đang học: <span id="current-badge" class="text-indigo-600">Lý thuyết</span></span>
-                    </div>
-                </div>
+    <div class="max-w-4xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 flex flex-col min-h-[650px]">
+        
+        <!-- Header -->
+        <div class="p-6 md:p-8 bg-gradient-to-r from-emerald-600 to-teal-700 text-white relative">
+            <div class="absolute top-4 right-4 bg-white/20 px-3 py-1 rounded-full text-[10px] md:text-xs font-semibold backdrop-blur-md">
+                Buổi 1: Luyện Tập Cơ Bản 🌟
             </div>
-        </header>
-
-        <!-- Main Body Layout -->
-        <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col lg:flex-row gap-6">
-            
-            <!-- Sidebar Navigation Menu -->
-            <aside class="w-full lg:w-72 flex-shrink-0">
-                <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm space-y-2 sticky top-24">
-                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-3">Chương Trình Học</p>
-                    
-                    <button onclick="changeMenuTab('theory')" id="btn-tab-theory" class="w-full flex items-center justify-between p-3.5 rounded-2xl text-left font-bold text-sm transition-all duration-300 active-tab">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-book-open text-base"></i>
-                            <span>1. Học Ngữ Pháp</span>
-                        </div>
-                        <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
-                    </button>
-                    
-                    <button onclick="changeMenuTab('fill')" id="btn-tab-fill" class="w-full flex items-center justify-between p-3.5 rounded-2xl text-left font-bold text-sm text-slate-600 hover:bg-slate-50 transition-all duration-300">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-pen-clip text-base"></i>
-                            <span>2. Điền Vào Chỗ Trống</span>
-                        </div>
-                        <span class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-md font-extrabold">5 Câu</span>
-                    </button>
-                    
-                    <button onclick="changeMenuTab('sentence')" id="btn-tab-sentence" class="w-full flex items-center justify-between p-3.5 rounded-2xl text-left font-bold text-sm text-slate-600 hover:bg-slate-50 transition-all duration-300">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-arrows-spin text-base"></i>
-                            <span>3. Sắp Xếp Ghép Câu</span>
-                        </div>
-                        <span class="text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md font-extrabold">4 Câu</span>
-                    </button>
-
-                    <button onclick="changeMenuTab('translate')" id="btn-tab-translate" class="w-full flex items-center justify-between p-3.5 rounded-2xl text-left font-bold text-sm text-slate-600 hover:bg-slate-50 transition-all duration-300">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-language text-base"></i>
-                            <span>4. Dịch Việt - Trung</span>
-                        </div>
-                        <span class="text-[10px] bg-amber-50 text-amber-600 px-2 py-0.5 rounded-md font-extrabold">4 Câu</span>
-                    </button>
-                    
-                    <button onclick="changeMenuTab('paragraph')" id="btn-tab-paragraph" class="w-full flex items-center justify-between p-3.5 rounded-2xl text-left font-bold text-sm text-slate-600 hover:bg-slate-50 transition-all duration-300">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-brain text-base"></i>
-                            <span>5. Viết Đoạn Văn AI</span>
-                        </div>
-                        <span class="text-[10px] bg-rose-50 text-rose-600 px-2 py-0.5 rounded-md font-extrabold">Live</span>
-                    </button>
-                </div>
-            </aside>
-
-            <!-- Main Content Area -->
-            <main class="flex-1 min-w-0">
-                
-                <!-- Toast Notification Container (Thay cho Alert) -->
-                <div id="toast-notify" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 text-white rounded-2xl shadow-xl px-5 py-4 border border-slate-800 flex items-center gap-3 transition-all duration-300 animate-slide-up">
-                    <div id="toast-icon-bg" class="p-1.5 bg-emerald-500 rounded-lg text-white">
-                        <i id="toast-icon" class="fa-solid fa-circle-check"></i>
-                    </div>
-                    <div>
-                        <h4 id="toast-title" class="font-bold text-xs">Thành công</h4>
-                        <p id="toast-body" class="text-[11px] text-slate-400 mt-0.5"></p>
-                    </div>
-                </div>
-
-                <!-- ================= TAB 1: HỌC NGỮ PHÁP (THEORY HUB) ================= -->
-                <section id="panel-theory" class="space-y-6">
-                    <div class="bg-gradient-to-r from-primary-600 to-indigo-700 p-6 sm:p-8 rounded-3xl text-white shadow-md relative overflow-hidden">
-                        <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-white/10 rounded-full blur-2xl"></div>
-                        <span class="text-[10px] bg-white/20 font-extrabold uppercase tracking-widest px-3 py-1 rounded-full backdrop-blur-md">Bài học cốt lõi</span>
-                        <h2 class="text-xl sm:text-2xl font-black mt-3">Bí Quyết Làm Chủ "Bổ Ngữ" (补语)</h2>
-                        <p class="text-xs sm:text-sm text-indigo-100 mt-2 max-w-xl">
-                            Bổ ngữ là thành phần đứng sau động từ hoặc tính từ, dùng để bổ sung ý nghĩa về kết quả, xu hướng, trạng thái, khả năng, thời lượng hay số lượng của hành động đó. Hãy click vào từng thẻ dưới đây để học kỹ công thức nhé!
-                        </p>
-                    </div>
-
-                    <!-- Grammar Accordion Grid -->
-                    <div id="grammar-accordion" class="space-y-4">
-                        <!-- Nội dung sẽ tự động render bằng Javascript để tiện quản lý và giữ code ngắn gọn -->
-                    </div>
-                </section>
-
-                <!-- ================= TAB 2: ĐIỀN VÀO CHỖ TRỐNG ================= -->
-                <section id="panel-fill" class="hidden space-y-6">
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <span class="text-[10px] font-extrabold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Thực hành 1</span>
-                                <h3 class="text-lg font-black mt-1">Điền Từ Vào Chỗ Trống</h3>
-                            </div>
-                            <span id="fill-progress" class="text-xs text-slate-500 font-semibold bg-slate-50 px-3 py-1 rounded-full">Câu 1 / 5</span>
-                        </div>
-
-                        <!-- Progress Bar -->
-                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-6">
-                            <div id="fill-progress-bar" class="bg-indigo-600 h-full transition-all duration-300 w-1/5"></div>
-                        </div>
-
-                        <div id="fill-question-card" class="bg-slate-50 border border-slate-100 rounded-2xl p-6 mb-6">
-                            <div class="flex items-start justify-between gap-4">
-                                <div>
-                                    <h4 id="fill-sentence-zh" class="text-xl sm:text-2xl font-bold tracking-wide text-slate-800 chinese-font flex items-center gap-3">
-                                        <!-- Câu chữ Trung sẽ được chèn ở đây -->
-                                    </h4>
-                                    <p id="fill-sentence-py" class="text-xs text-slate-500 font-medium italic mt-2">
-                                        <!-- Pinyin -->
-                                    </p>
-                                    <p id="fill-sentence-vi" class="text-sm font-semibold text-slate-600 mt-3">
-                                        <!-- Nghĩa tiếng Việt -->
-                                    </p>
-                                </div>
-                                <button id="btn-speak-fill" class="p-2.5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-indigo-600 rounded-xl transition shadow-sm">
-                                    <i class="fa-solid fa-volume-high"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Options Container -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="fill-options-container">
-                            <!-- JS Inject -->
-                        </div>
-
-                        <!-- Feedback Panel -->
-                        <div id="fill-feedback" class="hidden mt-6 p-4 rounded-2xl transition-all duration-300">
-                            <!-- JS Inject -->
-                        </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex justify-end gap-3 mt-6">
-                            <button id="btn-fill-next" onclick="nextFillQuestion()" disabled class="px-5 py-3 bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md flex items-center gap-2 cursor-not-allowed opacity-50">
-                                Tiếp theo <i class="fa-solid fa-chevron-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ================= TAB 3: SẮP XẾP GHÉP CÂU ================= -->
-                <section id="panel-sentence" class="hidden space-y-6">
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <span class="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Thực hành 2</span>
-                                <h3 class="text-lg font-black mt-1">Sắp Xếp Các Khối Từ Thành Câu Đúng</h3>
-                            </div>
-                            <span id="sentence-progress" class="text-xs text-slate-500 font-semibold bg-slate-50 px-3 py-1 rounded-full">Câu 1 / 4</span>
-                        </div>
-
-                        <!-- Progress Bar -->
-                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-6">
-                            <div id="sentence-progress-bar" class="bg-emerald-500 h-full transition-all duration-300 w-1/4"></div>
-                        </div>
-
-                        <!-- Câu tiếng Việt dẫn gợi ý -->
-                        <div class="p-4 bg-emerald-50/50 border border-emerald-100/60 rounded-2xl text-sm text-slate-700 font-bold mb-6 flex items-center gap-2.5">
-                            <i class="fa-solid fa-circle-info text-emerald-600"></i>
-                            <span id="sentence-hint-vi">Yêu cầu ghép: Tôi không thể viết hết ngần này chữ Hán.</span>
-                        </div>
-
-                        <!-- Khung kết quả ghép hiện tại -->
-                        <div class="border-2 border-dashed border-slate-200 bg-slate-50/50 rounded-2xl p-5 min-h-[80px] flex flex-wrap gap-2 items-center" id="sentence-assembly-area">
-                            <!-- Chữ được ghép sẽ bay vào đây -->
-                            <p class="text-xs text-slate-400 italic w-full text-center" id="sentence-assembly-placeholder">Nhấp vào các từ ở dưới để bắt đầu ghép...</p>
-                        </div>
-
-                        <!-- Tập hợp các từ cần chọn -->
-                        <div class="flex flex-wrap gap-2 justify-center py-6 border-b border-dashed border-slate-100" id="sentence-words-pool">
-                            <!-- Các khối từ sẽ được xáo trộn ở đây -->
-                        </div>
-
-                        <div class="flex items-center justify-between mt-6">
-                            <button onclick="resetCurrentSentence()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition flex items-center gap-1.5">
-                                <i class="fa-solid fa-arrow-rotate-left"></i> Làm lại
-                            </button>
-                            <div class="flex gap-2">
-                                <button onclick="checkSentenceResult()" id="btn-sentence-submit" class="px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-bold transition shadow-md">
-                                    <i class="fa-solid fa-circle-check"></i> Kiểm tra
-                                </button>
-                                <button onclick="nextSentenceQuestion()" id="btn-sentence-next" disabled class="px-5 py-3 bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md flex items-center gap-2 cursor-not-allowed opacity-50">
-                                    Tiếp theo <i class="fa-solid fa-chevron-right"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Kết quả chấm câu -->
-                        <div id="sentence-feedback" class="hidden p-4 rounded-2xl mt-6 transition-all duration-300">
-                            <!-- JS Inject -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ================= TAB 4: DỊCH VIỆT - TRUNG ================= -->
-                <section id="panel-translate" class="hidden space-y-6">
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <span class="text-[10px] font-extrabold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Thực hành 3</span>
-                                <h3 class="text-lg font-black mt-1">Thử Thách Dịch Việt - Trung</h3>
-                            </div>
-                            <span id="translate-progress" class="text-xs text-slate-500 font-semibold bg-slate-50 px-3 py-1 rounded-full">Câu 1 / 4</span>
-                        </div>
-
-                        <!-- Progress Bar -->
-                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-6">
-                            <div id="translate-progress-bar" class="bg-amber-500 h-full transition-all duration-300 w-1/4"></div>
-                        </div>
-
-                        <!-- Đề bài câu tiếng Việt -->
-                        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 mb-5 flex items-center justify-between">
-                            <div>
-                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Bản dịch tiếng Việt gốc:</p>
-                                <h4 id="translate-prompt-vi" class="text-base sm:text-lg font-bold text-slate-800 mt-1">
-                                    Anh ấy chạy vừa nhanh vừa nhẹ nhàng.
-                                </h4>
-                            </div>
-                            <span class="text-xs font-bold text-primary-600 bg-primary-50 px-2.5 py-1 rounded-lg">Cần dùng bổ ngữ</span>
-                        </div>
-
-                        <!-- Nhập bài làm -->
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-slate-500">Bài dịch của bạn (Tiếng Trung):</label>
-                            <input type="text" id="translate-user-input" placeholder="Hãy viết câu tiếng Trung tại đây..." class="w-full px-4 py-3 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border-2 border-slate-100 focus:border-primary-500 rounded-2xl text-base font-medium outline-none transition duration-300 chinese-font">
-                        </div>
-
-                        <div class="flex justify-end gap-2 mt-6">
-                            <button onclick="checkTranslationResult()" id="btn-translate-submit" class="px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-bold transition shadow-md">
-                                <i class="fa-solid fa-magnifying-glass-chart"></i> Nộp bài kiểm tra
-                            </button>
-                            <button onclick="nextTranslateQuestion()" id="btn-translate-next" disabled class="px-5 py-3 bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md flex items-center gap-2 cursor-not-allowed opacity-50">
-                                Câu tiếp theo <i class="fa-solid fa-chevron-right"></i>
-                            </button>
-                        </div>
-
-                        <!-- Kết quả so sánh so khớp thông minh -->
-                        <div id="translate-feedback" class="hidden p-5 rounded-2xl mt-6 transition-all duration-300 border">
-                            <!-- JS Inject -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- ================= TAB 5: VIẾT ĐOẠN VĂN VỚI AI (LIVE REVIEWER) ================= -->
-                <section id="panel-paragraph" class="hidden space-y-6">
-                    <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                        <!-- Tiêu đề AI -->
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 bg-gradient-to-tr from-rose-500 to-amber-500 text-white rounded-2xl flex items-center justify-center text-xl shadow-md live-pulse">
-                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-black tracking-tight flex items-center gap-2">
-                                        Trợ Lý Chữa Văn AI Thông Minh
-                                        <span class="text-[9px] text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full font-black uppercase">Gemini 3.1 Live</span>
-                                    </h3>
-                                    <p class="text-xs text-slate-500 font-medium">Viết đoạn văn ngắn bằng tiếng Trung và nhận đánh giá ngữ pháp tức thì từ AI.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Hướng dẫn viết bài -->
-                        <div class="p-5 bg-indigo-50 border border-indigo-100 rounded-2xl text-sm text-indigo-900 space-y-2">
-                            <p class="font-extrabold flex items-center gap-1.5 text-xs text-indigo-900">
-                                <i class="fa-solid fa-pen-nib"></i> CHỦ ĐỀ GỢI Ý: KỂ VỀ MỘT NGÀY ĐI DU LỊCH HOẶC HỌC TẬP CỦA BẠN (旅行或学习的一天)
-                            </p>
-                            <p class="text-[11px] leading-relaxed text-indigo-700 font-medium">
-                                Hãy viết một đoạn văn ngắn khoảng 3 đến 5 câu bằng tiếng Trung. Hãy cố gắng áp dụng linh hoạt ít nhất 2 đến 3 loại bổ ngữ đã học ở mục lý thuyết (Ví dụ: <em>学得很快, 听懂了, 爬上去, 学了三个小时...</em>) để Trợ Lý AI kiểm tra cho bạn nhé!
-                            </p>
-                        </div>
-
-                        <!-- Khung viết văn -->
-                        <div class="space-y-2 mt-6">
-                            <div class="flex justify-between items-center">
-                                <label class="text-xs font-bold text-slate-500">Hãy viết đoạn văn của bạn ở dưới đây (Tiếng Trung):</label>
-                                <span id="char-counter" class="text-xs text-slate-400">0 ký tự</span>
-                            </div>
-                            <textarea id="ai-user-paragraph" rows="5" oninput="updateCharCount()" placeholder="我今天早上六点起床，吃过早饭以后我就出去跑一跑..." class="w-full p-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border-2 border-slate-100 focus:border-rose-500 rounded-2xl text-base font-medium outline-none transition duration-300 chinese-font leading-relaxed"></textarea>
-                        </div>
-
-                        <!-- Gửi bài cho AI -->
-                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
-                            <span class="text-[10px] text-slate-400 italic">★ Mô hình tự động sửa lỗi và trả về nhận xét trực quan bằng tiếng Việt</span>
-                            <button onclick="sendParagraphToAI()" id="btn-submit-ai" class="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-600 hover:to-indigo-700 text-white font-extrabold rounded-xl text-xs transition duration-300 shadow-lg shadow-indigo-100 flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-paper-plane"></i> Gửi AI đánh giá ngữ pháp
-                            </button>
-                        </div>
-
-                        <!-- Khung Loading khi đợi AI phản hồi -->
-                        <div id="ai-loading-container" class="hidden py-8 flex flex-col items-center justify-center gap-3">
-                            <div class="flex items-center gap-1.5">
-                                <div class="w-2.5 h-6 bg-rose-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                                <div class="w-2.5 h-8 bg-indigo-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                                <div class="w-2.5 h-6 bg-rose-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
-                            </div>
-                            <p class="text-xs font-bold text-slate-500 animate-pulse">Trợ lý AI đang quét và phân tích các bổ ngữ bạn đã dùng...</p>
-                        </div>
-
-                        <!-- Khung kết quả phản hồi của AI -->
-                        <div id="ai-response-container" class="hidden bg-slate-50 border border-slate-200/60 rounded-3xl p-6 space-y-4">
-                            <div class="flex items-center justify-between border-b border-slate-200/50 pb-3">
-                                <h4 class="font-extrabold text-sm text-slate-800 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-sparkles text-rose-500"></i> Bảng Nhận Xét Chi Tiết Từ AI
-                                </h4>
-                                <span class="text-[10px] font-bold text-slate-500 bg-slate-200/50 px-2.5 py-1 rounded-full flex items-center gap-1">
-                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span> Trạng thái: Đã xong
-                                </span>
-                            </div>
-                            
-                            <!-- Hộp nội dung markdown do AI phản hồi -->
-                            <div id="ai-feedback-box" class="text-xs sm:text-sm text-slate-700 leading-relaxed space-y-3 prose max-w-none">
-                                <!-- Chứa bài chấm của AI -->
-                            </div>
-                        </div>
-
-                    </div>
-                </section>
-
-            </main>
+            <h1 class="text-xl md:text-2xl font-black tracking-tight">LUYỆN PHÁT ÂM TIẾNG TRUNG</h1>
+            <p class="mt-2 text-emerald-100 text-xs md:text-sm">
+                Hãy nhấn trực tiếp vào từng ô âm tiết để nghe giáo viên phát âm mẫu chuẩn, sau đó dùng bộ thu âm ở cuối trang để tự sửa giọng nói nhé.
+            </p>
         </div>
 
-        <!-- Footer -->
-        <footer class="bg-white border-t border-slate-100 py-6 mt-12">
-            <div class="max-w-7xl mx-auto px-4 text-center">
-                <p class="text-[11px] text-slate-400 font-bold tracking-wide">© 2026 HỆ THỐNG KIỂM TRA NGỮ PHÁP TIẾNG TRUNG CHUYÊN BIỆT</p>
-                <p class="text-[10px] text-slate-400 mt-1">Học tốt, đọc chuẩn, thực hành thông minh cùng Trợ lý Trí Tuệ Nhân Tạo</p>
+        <!-- Thanh điều hướng tab -->
+        <div class="grid grid-cols-3 border-b border-slate-100 bg-slate-50 p-2 gap-1.5 font-bold text-xs">
+            <button id="tab-grid" onclick="switchTab('grid')" class="py-3 px-1 rounded-xl transition duration-200 tab-active">
+                <i class="fa-solid fa-table-cells mr-1.5"></i> Bảng Âm Tiết
+            </button>
+            <button id="tab-compounds" onclick="switchTab('compounds')" class="py-3 px-1 rounded-xl transition duration-200 text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-layer-group mr-1.5"></i> Luyện Từ Ghép
+            </button>
+            <button id="tab-flashcard" onclick="switchTab('flashcard')" class="py-3 px-1 rounded-xl transition duration-200 text-slate-600 hover:bg-slate-100">
+                <i class="fa-solid fa-bolt mr-1.5"></i> Thẻ Phản Xạ
+            </button>
+        </div>
+
+        <!-- Khung Nội Dung Chính -->
+        <div class="p-4 md:p-6 flex-1 flex flex-col justify-between space-y-6">
+
+            <!-- Toast báo lỗi/thông báo tuỳ chỉnh (Không dùng alert) -->
+            <div id="toast-message" class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-800 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5 text-xs font-semibold animate-bounce transition-all">
+                <span id="toast-icon" class="text-emerald-400">⚡</span>
+                <span id="toast-text"></span>
             </div>
-        </footer>
+
+            <!-- TAB 1: BẢNG ÂM TIẾT GỐC (image_8243d8.png) -->
+            <div id="view-grid" class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">🎯 Bảng âm mẫu chuẩn của bài học</span>
+                    <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-md">* Chữ xanh lá cần bật hơi</span>
+                </div>
+
+                <div class="overflow-x-auto rounded-2xl border border-slate-100 bg-white custom-scrollbar">
+                    <table class="w-full border-collapse min-w-[640px]">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-[10px] font-bold uppercase tracking-wider border-b border-slate-200">
+                                <th class="p-2 text-center w-[12.5%]">Cột 1 (b)</th>
+                                <th class="p-2 text-center w-[12.5%] text-emerald-600 font-extrabold">Cột 2 (p ★)</th>
+                                <th class="p-2 text-center w-[12.5%]">Cột 3 (m)</th>
+                                <th class="p-2 text-center w-[12.5%]">Cột 4 (f)</th>
+                                <th class="p-2 text-center w-[12.5%]">Cột 5 (d/g/j)</th>
+                                <th class="p-2 text-center w-[12.5%] text-emerald-600 font-extrabold">Cột 6 (t/k/q ★)</th>
+                                <th class="p-2 text-center w-[12.5%]">Cột 7 (n/h)</th>
+                                <th class="p-2 text-center w-[12.5%]">Cột 8 (l/x)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pinyin-grid-body" class="divide-y divide-slate-100">
+                            <!-- Chèn bằng Javascript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 2: LUYỆN TỪ GHÉP (2 cột cân đối, không dịch tiếng Việt) -->
+            <div id="view-compounds" class="hidden space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">👥 Luyện phát âm từ ghép 2 âm tiết</span>
+                    <span class="text-[10px] text-slate-400 italic">Nhấn vào từ để phát âm mẫu</span>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                    <div class="grid grid-cols-2 gap-x-8 gap-y-4 max-w-md mx-auto relative">
+                        <!-- Đường kẻ dọc phân cách ở giữa -->
+                        <div class="absolute left-1/2 top-0 bottom-0 w-[1px] bg-slate-200 -translate-x-1/2"></div>
+                        
+                        <!-- Cột Trái -->
+                        <div id="compound-col-left" class="space-y-3 flex flex-col items-center">
+                            <!-- JS Inject -->
+                        </div>
+
+                        <!-- Cột Phải -->
+                        <div id="compound-col-right" class="space-y-3 flex flex-col items-center">
+                            <!-- JS Inject -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: THẺ PHẢN XẠ NGẪU NHIÊN -->
+            <div id="view-flashcard" class="hidden space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">⚡ Luyện phản xạ nhìn chữ đọc nhanh</span>
+                    <span id="flashcard-counter" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Thẻ 1 / 1</span>
+                </div>
+
+                <div class="flex flex-col items-center justify-center py-8 px-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200 relative overflow-hidden">
+                    <div class="h-28 flex items-center justify-center">
+                        <span id="flashcard-syllable" class="text-5xl md:text-6xl font-black tracking-wide text-slate-800 transition-all duration-300 hover:scale-110 cursor-pointer select-none">
+                            bā
+                        </span>
+                    </div>
+
+                    <p class="text-[10px] text-slate-400 mb-4 flex items-center gap-1">
+                        <i class="fa-solid fa-hand-pointer animate-bounce"></i> Click vào chữ để nghe phát âm mẫu
+                    </p>
+
+                    <div class="flex gap-2">
+                        <button onclick="speakCurrentFlashcard()" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm active:scale-95">
+                            <i class="fa-solid fa-volume-high"></i> Nghe mẫu
+                        </button>
+                        <button onclick="nextFlashcard()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5 shadow-sm active:scale-95">
+                            Từ tiếp theo <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Kết quả lưu tạm trong phiên -->
+                <div class="grid grid-cols-2 gap-3 pt-1">
+                    <button onclick="markFlashcard(true)" class="p-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 rounded-xl text-center transition flex items-center justify-between px-4">
+                        <span class="text-xs font-bold text-emerald-800">😊 Đã đọc đúng</span>
+                        <span id="stat-passed" class="text-sm font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg border border-emerald-100">0</span>
+                    </button>
+                    <button onclick="markFlashcard(false)" class="p-3 bg-rose-50 hover:bg-rose-100 border border-rose-100 rounded-xl text-center transition flex items-center justify-between px-4">
+                        <span class="text-xs font-bold text-rose-800">✍️ Cần luyện thêm</span>
+                        <span id="stat-retry" class="text-sm font-black text-rose-600 bg-white px-2 py-0.5 rounded-lg border border-rose-100">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- BỘ THU ÂM GIỌNG ĐỌC CỦA HỌC SINH -->
+            <div class="bg-slate-900 rounded-2xl p-4 md:p-5 text-white border border-slate-800">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="space-y-0.5">
+                        <h3 class="text-xs font-extrabold text-slate-200 uppercase tracking-wide flex items-center gap-1.5">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                            </span>
+                            Bộ Ghi Âm Sửa Giọng Tại Chỗ
+                        </h3>
+                        <p class="text-[10px] text-slate-400">Giúp các em tự đối chiếu âm lượng và khẩu hình hơi thở của mình.</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-2.5">
+                        <!-- Nút bắt đầu / dừng -->
+                        <button id="btn-record" onclick="toggleRecording()" class="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-xl text-xs transition active:scale-95 shadow-lg shadow-rose-900/30">
+                            <i id="record-icon-class" class="fa-solid fa-microphone"></i>
+                            <span id="record-text">Ghi âm ngay</span>
+                        </button>
+                        
+                        <!-- Nút nghe lại -->
+                        <button id="btn-play" onclick="playRecording()" disabled class="flex items-center gap-2 px-4 py-2.5 bg-slate-800 text-slate-500 font-extrabold rounded-xl text-xs transition cursor-not-allowed border border-slate-700/50">
+                            <i class="fa-solid fa-play"></i>
+                            <span>Nghe giọng mình</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mô phỏng sóng âm đẹp mắt khi đang thu âm -->
+                <div id="recording-status" class="hidden flex items-center justify-center gap-1.5 mt-3 pt-3 border-t border-slate-800/80">
+                    <span class="text-[9px] text-rose-500 font-bold uppercase tracking-widest mr-2 animate-pulse">Đang thu âm...</span>
+                    <div class="w-1.5 h-3 bg-rose-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                    <div class="w-1.5 h-4.5 bg-rose-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    <div class="w-1.5 h-3 bg-rose-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <script>
-        // Danh sách định nghĩa các Loại Bổ ngữ (Theory)
-        const grammarData = [
-            {
-                id: "bng_ketqua",
-                title: "Bổ Ngữ Kết Quả (结果补语)",
-                description: "Dùng để biểu thị kết quả của hành động sau khi thực hiện.",
-                formula: "Động từ (V) + Động từ/Tính từ làm bổ ngữ kết quả (như: 懂, 见, 完, 好, 错...)",
-                exampleZh: "我们看完了这一本书。",
-                examplePy: "wǒ men kàn wán le zhè yī běn shū.",
-                exampleVi: "Chúng tôi đã đọc xong quyển sách này rồi.",
-                analysis: "Động từ '看' (đọc) kết hợp với bổ ngữ kết quả '完' (xong) để báo cáo hành động đọc đã kết thúc và có kết quả cụ thể."
-            },
-            {
-                id: "bng_xuhuong",
-                title: "Bổ Ngữ Xu Hướng (趋向补语)",
-                description: "Dùng để biểu thị hướng di chuyển của hành động (gần hay xa người nói).",
-                formula: "Động từ (V) + 来 (lại đây - hướng về người nói) / 去 (đi kia - hướng ra xa người nói) hoặc bổ ngữ xu hướng kép (进来, 出去, 爬上来...)",
-                exampleZh: "老师走进教室来了。",
-                examplePy: "lǎo shī zǒu jìn jiào shì lái le.",
-                exampleVi: "Thầy giáo bước vào trong lớp học rồi.",
-                analysis: "Bổ ngữ xu hướng kép '进来' (vào trong này) đi kèm động từ chính '走' (đi) thể hiện thầy giáo bước vào phía trong lớp (nơi người nói đang ở đó)."
-            },
-            {
-                id: "bng_trangthai",
-                title: "Bổ Ngữ Trạng Thái (状态补语)",
-                description: "Dùng để đánh giá, miêu tả, hoặc nhận xét về trạng thái, mức độ của một hành động đã hoặc đang diễn ra.",
-                formula: "Động từ (V) + 得 + Tính từ/Cụm từ bổ nghĩa",
-                exampleZh: "他汉语说得非常流利。",
-                examplePy: "tā hàn yǔ shuō de fēi cháng liú lì.",
-                exampleVi: "Anh ấy nói tiếng Trung vô cùng lưu loát.",
-                analysis: "Từ '得' bắt buộc đứng sau động từ '说' và dẫn ra nhận xét '非常流利' (rất lưu loát) về năng lực nói của chủ ngữ."
-            },
-            {
-                id: "bng_khanang",
-                title: "Bổ Ngữ Khả Năng (可能补语)",
-                description: "Dùng để biểu thị một hành động có thể hoặc không thể đạt được kết quả hoặc hướng đi nào đó.",
-                formula: "Khẳng định: V + 得 + Bổ ngữ kết quả/xu hướng | Phủ định: V + 不 + Bổ ngữ kết quả/xu hướng",
-                exampleZh: "今天的作业太多了，我做不完。",
-                examplePy: "jīn tiān de zuò yè tài duō le, wǒ zuò bù wán.",
-                exampleVi: "Bài tập hôm nay nhiều quá, tôi không thể làm hết được.",
-                analysis: "Mẫu phủ định '做不完' (làm không hết) thể hiện khả năng thực tế của chủ ngữ là không thể hoàn thành bài tập do số lượng quá nhiều."
-            },
-            {
-                id: "bng_thoiluong",
-                title: "Bổ Ngữ Thời Lượng (时量补语)",
-                description: "Dùng để biểu thị khoảng thời gian diễn ra hoặc duy trì của hành động hay trạng thái.",
-                formula: "Động từ (V) + (Tân ngữ) + V + (了) + Khoảng thời gian | Hoặc: V + 了 + Khoảng thời gian + (的) + Tân ngữ",
-                exampleZh: "他学了三年的汉语。",
-                examplePy: "tā xué le sān nián de hàn yǔ.",
-                exampleVi: "Anh ấy đã học tiếng Trung được ba năm rồi.",
-                analysis: "Bổ ngữ thời lượng '三年' (ba năm) cho biết độ dài thời gian mà hành động '学' (học) đã được duy trì."
-            }
+        // Danh sách Ma trận đúng chuẩn 100% theo ảnh image_8243d8.png
+        const pinyinMatrix = [
+            ["bā", "pà", "mā", "fó", "dà", "tā", "nǔ", "lù"],
+            ["bǐ", "pí", "mǐ", "", "dé", "tī", "nǚ", "lǘ"],
+            ["bó", "pó", "mó", "fā", "dǔ", "tǔ", "", ""],
+            ["bù", "pù", "mǔ", "fù", "dú", "tú", "", ""],
+            ["gū", "kè", "hé", "jī", "qī", "xì", "", ""],
+            ["gǔ", "kǔ", "hù", "jì", "qǐ", "xǐ", "", ""],
+            ["gé", "kù", "hà", "jū", "qù", "xǔ", "", ""]
         ];
 
-        const fillQuestions = [
-            {
-                sentenceZh: "我听___懂老师说的话，因为老师说得太快了。",
-                sentencePy: "wǒ tīng ___ dǒng lǎo shī shuō de huà, yīn wèi lǎo shī shuō de tài kuài le.",
-                sentenceVi: "Tôi không nghe hiểu lời thầy giáo nói, vì thầy nói nhanh quá.",
-                options: ["得", "不", "完", "了"],
-                correct: "不",
-                explanation: "Vì vế sau ghi 'thầy nói nhanh quá' dẫn đến việc 'tôi KHÔNG THỂ nghe hiểu'. Ta dùng mẫu bổ ngữ khả năng phủ định: V + 不 + Bổ ngữ kết quả/xu hướng -> '听不懂' (không nghe hiểu)."
-            },
-            {
-                sentenceZh: "玛丽唱歌唱___非常动听。",
-                sentencePy: "mǎ lì chàng gē chàng ___ fēi cháng dòng tīng.",
-                sentenceVi: "Mary hát rất hay.",
-                options: ["的", "地", "得", "了"],
-                correct: "得",
-                explanation: "Để nhận xét hành động hát '唱' đạt trạng thái như thế nào ('非常动听' - rất hay), ta phải dùng trợ từ kết cấu '得' làm cầu nối dẫn bổ ngữ trạng thái."
-            },
-            {
-                sentenceZh: "外面下雨了，你快跑___来吧！",
-                sentencePy: "wài miàn xià yǔ le, nǐ kuài pǎo ___ lái ba!",
-                sentenceVi: "Bên ngoài mưa rồi, bạn mau chạy vào đây đi!",
-                options: ["去", "进", "出", "回"],
-                correct: "进",
-                explanation: "Cụm '跑进来' nghĩa là chạy vào trong này (hướng về phía người nói ở trong nhà). '进' biểu thị hướng đi vào trong."
-            },
-            {
-                sentenceZh: "昨晚我写___作业写了两个小时。",
-                sentencePy: "zuó wǎn wǒ xiě ___ zuò yè xiě le liǎng gè xiǎo shí.",
-                sentenceVi: "Tối qua tôi làm bài tập mất hai tiếng đồng hồ.",
-                options: ["完", "不", "去", "的"],
-                correct: "完",
-                explanation: "Vế sau có bổ ngữ thời lượng '两个小时'. Từ điền hợp ngữ cảnh ở đây là bổ ngữ kết quả '完' ý chỉ tối qua viết xong bài tập."
-            },
-            {
-                sentenceZh: "这件事太难了，你想___出来想不出来？",
-                sentencePy: "zhè jiàn shì tài nán le, nǐ xiǎng ___ chū lái xiǎng bù chū lái?",
-                sentenceVi: "Việc này khó quá, bạn có thể nghĩ ra nổi hay không?",
-                options: ["不", "完", "得", "过"],
-                correct: "得",
-                explanation: "Đây là mẫu câu hỏi chính phản của bổ ngữ khả năng: V + 得 + Bổ ngữ + V + 不 + Bổ ngữ -> '想得出来想不出来' (nghĩ có ra hay không)."
-            }
+        // Bản đồ Ánh xạ Pinyin -> Chữ Hán chính xác để kích hoạt TTS chất lượng nhất, chuẩn giọng nói bản xứ
+        const pinyinToHanziMap = {
+            "bā": "八", "pà": "怕", "mā": "妈", "fó": "佛", "dà": "大", "tā": "他", "nǔ": "努", "lù": "路",
+            "bǐ": "笔", "pí": "皮", "mǐ": "米", "dé": "得", "tī": "踢", "nǚ": "女", "lǘ": "驴",
+            "bó": "伯", "pó": "婆", "mó": "摩", "fā": "发", "dǔ": "堵", "tǔ": "土",
+            "bù": "不", "pù": "铺", "mǔ": "母", "fù": "父", "dú": "读", "tú": "图",
+            "gū": "姑", "kè": "客", "hé": "河", "jī": "鸡", "qī": "七", "xì": "戏",
+            "gǔ": "古", "kǔ": "苦", "hù": "户", "jì": "记", "qǐ": "起", "xǐ": "喜",
+            "gé": "格", "kù": "裤", "hà": "哈", "jū": "居", "qù": "去", "xǔ": "许",
+
+            // Các từ ghép song âm tiết (Cột trái và phải)
+            "bàba": "爸爸", "māma": "妈妈", "dìdi": "弟弟", "gēge": "哥哥", "fùmǔ": "父母", "dàgē": "大哥",
+            "lǚtú": "旅途", "qǐlì": "起立", "kělè": "可乐", "kèhù": "客户", "jīqì": "机器", "dàmǐ": "大米", 
+            "túdì": "徒弟", "mùmǎ": "木马", "húlu": "葫芦", "hédǐ": "河底"
+        };
+
+        // Danh sách từ ghép chia làm 2 cột cân bằng (mỗi cột 8 từ) đúng theo ảnh watermarked_img_16350214512991758958.png
+        const compoundWordsLeft = [
+            "bàba",
+            "māma",
+            "dìdi",
+            "gēge",
+            "fùmǔ",
+            "dàgē",
+            "lǚtú",
+            "qǐlì"
         ];
 
-        const sentenceQuestions = [
-            {
-                hintVi: "Tôi không nghe hiểu được thầy giáo nói gì.",
-                correctSentence: "我听不懂老师说的话",
-                words: ["老师", "我", "说", "懂", "听", "的", "话", "不"],
-                pinyin: "wǒ tīng bù dǒng lǎo shī shuō de huà.",
-                explanation: "Cấu trúc bổ ngữ khả năng phủ định: 我 (Chủ ngữ) + 听不懂 (V + 不 + 懂) + 老师说的话 (Tân ngữ)."
-            },
-            {
-                hintVi: "Thầy giáo bước vào trong lớp học rồi.",
-                correctSentence: "老师走进教室来了",
-                words: ["走进", "老师", "教室", "来了"],
-                pinyin: "lǎo shī zǒu jìn jiào shì lái le.",
-                explanation: "Cấu trúc bổ ngữ xu hướng kép với tân ngữ chỉ nơi chốn: V (走) + Xu hướng 1 (进) + Tân ngữ nơi chốn (教室) + Xu hướng 2 (来) + 了."
-            },
-            {
-                hintVi: "Anh ấy chạy vô cùng nhanh.",
-                correctSentence: "他跑得非常快",
-                words: ["跑", "他", "非常", "快", "得"],
-                pinyin: "tā pǎo de fēi cháng kuài.",
-                explanation: "Cấu trúc bổ ngữ trạng thái: 他 (Chủ ngữ) + 跑 (V) + 得 (Trợ từ) + 非常快 (Bổ ngữ nhận xét)."
-            },
-            {
-                hintVi: "Hôm nay tôi đã học ba tiếng đồng hồ tiếng Trung.",
-                correctSentence: "今天我学了三个小时的汉语",
-                words: ["汉语", "我", "今天", "的", "学了", "三个小时"],
-                pinyin: "jīn tiān wǒ xué le sān gè xiǎo shí de hàn yǔ.",
-                explanation: "Cấu trúc bổ ngữ thời lượng với tân ngữ: V + 了 + Lượng thời gian + 的 + Tân ngữ -> 学了 (V) + 三个小时 (thời lượng) + 的 + 汉语 (tân ngữ)."
-            }
+        const compoundWordsRight = [
+            "kělè",
+            "kèhù",
+            "jīqì",
+            "dàmǐ",
+            "túdì",
+            "mùmǎ",
+            "húlu",
+            "hédǐ"
         ];
 
-        const translateQuestions = [
-            {
-                viPrompt: "Tôi đã tìm thấy chiếc điện thoại di động của mình rồi.",
-                modelZh: "我找到我的手机了",
-                pinyin: "wǒ zhǎo dào wǒ de shǒu jī le.",
-                keyKeywords: ["找到", "手机"],
-                explanation: "Sử dụng động từ '找' (tìm) + bổ ngữ kết quả '到' (thấy) -> '找到' (tìm thấy)."
-            },
-            {
-                viPrompt: "Tối hôm qua cô ấy ngủ rất muộn.",
-                modelZh: "昨天晚上她睡得很晚",
-                pinyin: "zuó tiān wǎn shang tā shuì de hěn wǎn.",
-                keyKeywords: ["睡", "得", "晚"],
-                explanation: "Nhận xét hành động ngủ muộn dùng bổ ngữ trạng thái: '睡' (động từ) + '得' + '很晚' (bổ ngữ)."
-            },
-            {
-                viPrompt: "Bài thi hôm nay không khó, tôi làm xong được.",
-                modelZh: "今天的考试不难我做得完",
-                pinyin: "jīn tiān de kǎo shì bù nán wǒ zuò de wán.",
-                keyKeywords: ["做", "得", "完"],
-                explanation: "Thể hiện năng lực làm xong được bằng bổ ngữ khả năng khẳng định: '做得完' (làm được hết)."
-            },
-            {
-                viPrompt: "Mẹ mua về một ít hoa quả quả táo.",
-                modelZh: "妈妈买回来了一些苹果",
-                pinyin: "mā ma mǎi huí lái le yī xiē píng guǒ.",
-                keyKeywords: ["买", "回来", "苹果"],
-                explanation: "Sử dụng động từ '买' kết hợp bổ ngữ xu hướng '回来' (mua mang về đây)."
-            }
-        ];
+        // Danh sách phụ âm bật hơi có màu xanh lá cây
+        const greenInitials = ['p', 't', 'k', 'q'];
 
-        // Biến trạng thái toàn cục
-        let globalCorrectCount = 0;
-        let activeTab = "theory";
-
-        // Biến kiểm soát bài điền chỗ trống
-        let currentFillIndex = 0;
-        let selectedFillOption = null;
-
-        // Biến kiểm soát bài ghép câu
-        let currentSentenceIndex = 0;
-        let assembledWords = [];
-
-        // Biến kiểm soát bài dịch
-        let currentTranslateIndex = 0;
-
-        function showCustomToast(title, body, type = "success") {
-            const toast = document.getElementById('toast-notify');
-            const iconBg = document.getElementById('toast-icon-bg');
-            const icon = document.getElementById('toast-icon');
-            const tTitle = document.getElementById('toast-title');
-            const tBody = document.getElementById('toast-body');
-
-            tTitle.innerText = title;
-            tBody.innerText = body;
-
-            if (type === "success") {
-                iconBg.className = "p-1.5 bg-emerald-500 rounded-lg text-white";
-                icon.className = "fa-solid fa-circle-check";
-            } else if (type === "error") {
-                iconBg.className = "p-1.5 bg-rose-500 rounded-lg text-white";
-                icon.className = "fa-solid fa-circle-exclamation";
-            } else {
-                iconBg.className = "p-1.5 bg-amber-500 rounded-lg text-white";
-                icon.className = "fa-solid fa-bell";
-            }
-
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 4000);
-        }
-
-        // Tăng điểm đúng toàn hệ thống
-        function incrementGlobalCorrect() {
-            globalCorrectCount++;
-            document.getElementById('global-correct-count').innerText = globalCorrectCount;
-        }
-
-        function speakChinese(text) {
-            if (!text) return;
+        // Hàm phát âm TTS
+        function speak(pinyin) {
+            if (!pinyin) return;
             window.speechSynthesis.cancel();
-            const cleanText = text.replace(/___/g, '').replace(/[\s\.]/g, '');
-            const utterance = new SpeechSynthesisUtterance(cleanText);
+            
+            // Tìm chữ Hán tương ứng để công cụ TTS đọc tự nhiên nhất
+            const lookupKey = pinyin.replace(/\s+/g, '');
+            const textToSpeak = pinyinToHanziMap[lookupKey] || pinyin;
+            
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
             utterance.lang = 'zh-CN';
-            utterance.rate = 0.75; // Tốc độ hơi chậm rãi cho người học
+            utterance.rate = 0.65; // Đọc cực kỳ chậm rãi để trẻ/học sinh nghe rõ nét từng âm
 
+            // Ưu tiên chọn giọng đọc tiếng Trung chất lượng cao nếu có trên trình duyệt
             const voices = window.speechSynthesis.getVoices();
             const preferredVoice = voices.find(v => v.lang.startsWith('zh-CN') || v.lang.startsWith('zh_CN'));
             if (preferredVoice) {
                 utterance.voice = preferredVoice;
             }
+
             window.speechSynthesis.speak(utterance);
         }
 
-        // Chuyển đổi qua lại giữa các Tab chức năng chính
-        function changeMenuTab(tabId) {
-            // Danh sách các tab panel
-            const panels = ["theory", "fill", "sentence", "translate", "paragraph"];
-            panels.forEach(p => {
-                const element = document.getElementById(`panel-${p}`);
-                const btn = document.getElementById(`btn-tab-${p}`);
-                if (p === tabId) {
-                    element.classList.remove('hidden');
-                    btn.className = "w-full flex items-center justify-between p-3.5 rounded-2xl text-left font-bold text-sm transition-all duration-300 active-tab";
-                } else {
-                    element.classList.add('hidden');
-                    btn.className = "w-full flex items-center justify-between p-3.5 rounded-2xl text-left font-bold text-sm text-slate-600 hover:bg-slate-50 transition-all duration-300";
-                }
-            });
-
-            // Thay đổi nhãn trạng thái đầu trang
-            const badgeMap = {
-                "theory": "Lý thuyết",
-                "fill": "Thực hành 1",
-                "sentence": "Thực hành 2",
-                "translate": "Thực hành 3",
-                "paragraph": "Viết Đoạn Văn AI"
-            };
-            document.getElementById('current-badge').innerText = badgeMap[tabId];
-            activeTab = tabId;
-
-            // Khởi động lại dữ liệu tương ứng của tab đó nếu cần thiết
-            if (tabId === "fill") {
-                initFillQuestion();
-            } else if (tabId === "sentence") {
-                initSentenceQuestion();
-            } else if (tabId === "translate") {
-                initTranslateQuestion();
-            }
-        }
-
-        function renderGrammarAccordion() {
-            const container = document.getElementById('grammar-accordion');
-            container.innerHTML = '';
-
-            grammarData.forEach((gram, idx) => {
-                const card = document.createElement('div');
-                card.className = "bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300";
-                
-                card.innerHTML = `
-                    <button onclick="toggleAccordion('${gram.id}')" class="w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 font-bold text-base sm:text-lg text-slate-800">
-                        <div class="flex items-center gap-3">
-                            <span class="w-8 h-8 rounded-xl bg-primary-50 text-primary-600 text-xs flex items-center justify-center font-extrabold">${idx + 1}</span>
-                            <span>${gram.title}</span>
-                        </div>
-                        <i id="icon-${gram.id}" class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300"></i>
-                    </button>
-                    <div id="body-${gram.id}" class="hidden border-t border-slate-50 bg-slate-50/50 p-5 sm:p-6 space-y-4">
-                        <div class="space-y-1">
-                            <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide">Ý nghĩa sử dụng:</p>
-                            <p class="text-xs sm:text-sm text-slate-600 font-medium">${gram.description}</p>
-                        </div>
-                        <div class="p-3 bg-indigo-50 border border-indigo-100/50 rounded-xl">
-                            <p class="text-[10px] text-indigo-500 font-extrabold uppercase tracking-wide">Cấu trúc công thức:</p>
-                            <p class="text-xs sm:text-sm text-indigo-900 font-extrabold mt-1 chinese-font">${gram.formula}</p>
-                        </div>
-                        <div class="bg-white border border-slate-100 rounded-2xl p-4 flex justify-between items-center gap-4">
-                            <div class="space-y-1">
-                                <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide">Ví dụ thực tế:</p>
-                                <h4 class="text-base sm:text-lg font-bold text-slate-800 chinese-font tracking-wide">${gram.exampleZh}</h4>
-                                <p class="text-xs text-slate-500 italic font-medium">${gram.examplePy}</p>
-                                <p class="text-xs sm:text-sm font-semibold text-slate-600">${gram.exampleVi}</p>
-                            </div>
-                            <button onclick="speakChinese('${gram.exampleZh}')" class="p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 rounded-xl transition shadow-sm flex-shrink-0">
-                                <i class="fa-solid fa-volume-high"></i>
-                            </button>
-                        </div>
-                        <div class="text-[11px] leading-relaxed text-slate-500 border-l-2 border-emerald-500 pl-3 italic">
-                            <strong>Phân tích chuyên sâu:</strong> ${gram.analysis}
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-            // Tự mở cái đầu tiên
-            toggleAccordion(grammarData[0].id);
-        }
-
-        function toggleAccordion(id) {
-            const body = document.getElementById(`body-${id}`);
-            const icon = document.getElementById(`icon-${id}`);
+        // Tự tạo hệ thống thông báo Toast thay thế alert
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast-message');
+            const icon = document.getElementById('toast-icon');
+            const text = document.getElementById('toast-text');
             
-            const isHidden = body.classList.contains('hidden');
-            if (isHidden) {
-                body.classList.remove('hidden');
-                icon.style.transform = 'rotate(180deg)';
+            text.innerText = message;
+            if (type === 'success') {
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>';
+            } else if (type === 'error') {
+                icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-rose-500 text-sm"></i>';
             } else {
-                body.classList.add('hidden');
-                icon.style.transform = 'rotate(0deg)';
+                icon.innerHTML = '<i class="fa-solid fa-circle-info text-sky-400 text-sm"></i>';
+            }
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Chuyển đổi tab hoạt động
+        function switchTab(target) {
+            document.getElementById('view-grid').classList.add('hidden');
+            document.getElementById('view-compounds').classList.add('hidden');
+            document.getElementById('view-flashcard').classList.add('hidden');
+
+            document.getElementById('tab-grid').className = "py-3 px-1 rounded-xl transition duration-200 text-slate-600 hover:bg-slate-100";
+            document.getElementById('tab-compounds').className = "py-3 px-1 rounded-xl transition duration-200 text-slate-600 hover:bg-slate-100";
+            document.getElementById('tab-flashcard').className = "py-3 px-1 rounded-xl transition duration-200 text-slate-600 hover:bg-slate-100";
+
+            if (target === 'grid') {
+                document.getElementById('view-grid').classList.remove('hidden');
+                document.getElementById('tab-grid').classList.add('tab-active');
+            } else if (target === 'compounds') {
+                document.getElementById('view-compounds').classList.remove('hidden');
+                document.getElementById('tab-compounds').classList.add('tab-active');
+            } else if (target === 'flashcard') {
+                document.getElementById('view-flashcard').classList.remove('hidden');
+                document.getElementById('tab-flashcard').classList.add('tab-active');
+                initFlashcards();
             }
         }
 
-        // ================= TAB 2: ĐIỀN CHỖ TRỐNG LOGIC =================
-        function initFillQuestion() {
-            selectedFillOption = null;
-            const q = fillQuestions[currentFillIndex];
-            
-            // Render text
-            document.getElementById('fill-sentence-zh').innerHTML = q.sentenceZh.replace("___", "<span class='px-4 py-0.5 mx-1.5 border-b-2 border-dashed border-primary-500 text-primary-600 bg-primary-50 rounded font-black chinese-font animate-pulse'>?</span>");
-            document.getElementById('fill-sentence-py').innerText = q.sentencePy;
-            document.getElementById('fill-sentence-vi').innerText = q.sentenceVi;
-            document.getElementById('fill-progress').innerText = `Câu ${currentFillIndex + 1} / ${fillQuestions.length}`;
-            document.getElementById('fill-progress-bar').style.width = `${((currentFillIndex + 1) / fillQuestions.length) * 100}%`;
+        // Dựng Ma trận âm tiết
+        function buildGrid() {
+            const tbody = document.getElementById('pinyin-grid-body');
+            tbody.innerHTML = '';
 
-            // Reset buttons
-            document.getElementById('btn-fill-next').disabled = true;
-            document.getElementById('btn-fill-next').className = "px-5 py-3 bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md flex items-center gap-2 cursor-not-allowed opacity-50";
+            pinyinMatrix.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/50 transition-colors";
 
-            // Click phát âm
-            document.getElementById('btn-speak-fill').onclick = () => speakChinese(q.sentenceZh.replace("___", ""));
+                row.forEach(cell => {
+                    const td = document.createElement('td');
+                    td.className = "p-2 text-center border-r border-slate-100 last:border-0";
 
-            // Hide feedback
-            const fb = document.getElementById('fill-feedback');
-            fb.classList.add('hidden');
+                    if (cell) {
+                        const isGreen = greenInitials.some(prefix => cell.startsWith(prefix));
+                        const btn = document.createElement('button');
+                        btn.onclick = () => speak(cell);
+                        btn.className = `pinyin-btn w-full py-3 px-1 rounded-xl border font-bold text-sm tracking-wide bg-white flex items-center justify-center gap-0.5 ${
+                            isGreen 
+                            ? 'border-emerald-200 text-emerald-600 bg-emerald-50/20 hover:bg-emerald-50' 
+                            : 'border-slate-200 text-slate-700 hover:bg-emerald-50/10 hover:border-emerald-100'
+                        }`;
 
-            // Render Options
-            const optContainer = document.getElementById('fill-options-container');
-            optContainer.innerHTML = '';
-
-            q.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = "p-4 bg-white hover:bg-slate-50 border-2 border-slate-100 rounded-2xl font-black text-lg transition duration-200 text-slate-700 shadow-sm chinese-font focus:outline-none";
-                btn.innerText = opt;
-                btn.onclick = () => checkFillAnswer(opt, btn);
-                optContainer.appendChild(btn);
-            });
-        }
-
-        function checkFillAnswer(selected, element) {
-            const q = fillQuestions[currentFillIndex];
-            if (selectedFillOption !== null) return; // Không cho bấm lại sau khi đã chọn
-            
-            selectedFillOption = selected;
-            const fb = document.getElementById('fill-feedback');
-            fb.classList.remove('hidden');
-
-            // Khóa tất cả các nút
-            const buttons = document.getElementById('fill-options-container').querySelectorAll('button');
-            buttons.forEach(b => {
-                if (b.innerText === q.correct) {
-                    b.className = "p-4 bg-emerald-500 text-white border-2 border-emerald-500 rounded-2xl font-black text-lg shadow-md chinese-font";
-                } else if (b.innerText === selected && selected !== q.correct) {
-                    b.className = "p-4 bg-rose-500 text-white border-2 border-rose-500 rounded-2xl font-black text-lg shadow-md chinese-font";
-                } else {
-                    b.className = "p-4 bg-white border-2 border-slate-100 rounded-2xl font-black text-lg text-slate-300 cursor-not-allowed chinese-font";
-                }
-            });
-
-            if (selected === q.correct) {
-                incrementGlobalCorrect();
-                fb.className = "mt-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-800 space-y-1.5";
-                fb.innerHTML = `
-                    <div class="flex items-center gap-2 font-bold text-xs">
-                        <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i> CHÍNH XÁC!
-                    </div>
-                    <p class="text-xs leading-relaxed font-semibold">${q.explanation}</p>
-                `;
-                // Thay thế chỗ trống bằng chữ đúng
-                document.getElementById('fill-sentence-zh').innerHTML = q.sentenceZh.replace("___", `<span class='px-2.5 py-0.5 mx-1 border-b-2 border-emerald-500 text-emerald-600 bg-emerald-50 rounded font-black chinese-font'>${q.correct}</span>`);
-                showCustomToast("Chính xác", "Bạn đã trả lời đúng ngữ pháp!", "success");
-            } else {
-                fb.className = "mt-6 p-4 rounded-2xl bg-rose-50 border border-rose-100 text-rose-800 space-y-1.5";
-                fb.innerHTML = `
-                    <div class="flex items-center gap-2 font-bold text-xs">
-                        <i class="fa-solid fa-circle-xmark text-rose-600 text-sm"></i> CHƯA ĐÚNG RỒI!
-                    </div>
-                    <p class="text-xs leading-relaxed font-semibold">${q.explanation}</p>
-                `;
-                showCustomToast("Chưa đúng", "Hãy xem lại lời giải bên dưới", "error");
-            }
-
-            // Mở khóa nút tiếp theo
-            const nextBtn = document.getElementById('btn-fill-next');
-            nextBtn.removeAttribute('disabled');
-            nextBtn.className = "px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md flex items-center gap-2 cursor-pointer active:scale-95";
-        }
-
-        function nextFillQuestion() {
-            currentFillIndex++;
-            if (currentFillIndex < fillQuestions.length) {
-                initFillQuestion();
-            } else {
-                // Đã hoàn thành tất cả
-                showCustomToast("Chúc mừng!", "Bạn đã hoàn thành phần thi Điền Chỗ Trống!", "success");
-                changeMenuTab('sentence');
-            }
-        }
-
-        // ================= TAB 3: SẮP XẾP GHÉP CÂU LOGIC =================
-        function initSentenceQuestion() {
-            assembledWords = [];
-            const q = sentenceQuestions[currentSentenceIndex];
-
-            // Render Title & Progress
-            document.getElementById('sentence-progress').innerText = `Câu ${currentSentenceIndex + 1} / ${sentenceQuestions.length}`;
-            document.getElementById('sentence-progress-bar').style.width = `${((currentSentenceIndex + 1) / sentenceQuestions.length) * 100}%`;
-            document.getElementById('sentence-hint-vi').innerText = `Yêu cầu ghép: ${q.hintVi}`;
-
-            // Reset Areas
-            document.getElementById('sentence-assembly-area').innerHTML = `
-                <p class="text-xs text-slate-400 italic w-full text-center" id="sentence-assembly-placeholder">Nhấp vào các từ ở dưới để bắt đầu ghép...</p>
-            `;
-            document.getElementById('sentence-feedback').classList.add('hidden');
-
-            // Xóa xáo trộn
-            const pool = document.getElementById('sentence-words-pool');
-            pool.innerHTML = '';
-
-            // Copy và xáo trộn từ ngẫu nhiên
-            const shuffledWords = [...q.words].sort(() => Math.random() - 0.5);
-            shuffledWords.forEach(word => {
-                const btn = document.createElement('button');
-                btn.className = "px-4 py-2.5 bg-white hover:bg-slate-50 border-2 border-slate-100 rounded-xl font-bold text-sm text-slate-700 shadow-sm transition active:scale-95 chinese-font";
-                btn.innerText = word;
-                btn.onclick = () => selectWordBlock(word, btn);
-                pool.appendChild(btn);
-            });
-
-            // Lock next button
-            const nextBtn = document.getElementById('btn-sentence-next');
-            nextBtn.disabled = true;
-            nextBtn.className = "px-5 py-3 bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md flex items-center gap-2 cursor-not-allowed opacity-50";
-
-            // Unlock Submit
-            const submitBtn = document.getElementById('btn-sentence-submit');
-            submitBtn.disabled = false;
-            submitBtn.className = "px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-bold transition shadow-md cursor-pointer";
-        }
-
-        function selectWordBlock(word, element) {
-            // Ẩn placeholder
-            const placeholder = document.getElementById('sentence-assembly-placeholder');
-            if (placeholder) placeholder.remove();
-
-            // Đưa từ vào danh sách ghép
-            assembledWords.push({ text: word, origBtn: element });
-            element.classList.add('opacity-30', 'pointer-events-none'); // Làm mờ nút gốc
-
-            // Tạo nút trong khung kết quả
-            const container = document.getElementById('sentence-assembly-area');
-            const wordBtn = document.createElement('button');
-            wordBtn.className = "px-3 py-1.5 bg-primary-50 border border-primary-200 text-primary-700 font-bold text-sm rounded-lg flex items-center gap-1.5 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-700 transition duration-150 chinese-font";
-            wordBtn.innerHTML = `${word} <i class="fa-solid fa-xmark text-[10px]"></i>`;
-            
-            // Nhấn để xóa từ
-            wordBtn.onclick = () => {
-                wordBtn.remove();
-                // Khôi phục nút gốc
-                element.classList.remove('opacity-30', 'pointer-events-none');
-                assembledWords = assembledWords.filter(item => item.origBtn !== element);
-
-                // Nếu trống thì hiện lại placeholder
-                if (assembledWords.length === 0) {
-                    container.innerHTML = `
-                        <p class="text-xs text-slate-400 italic w-full text-center" id="sentence-assembly-placeholder">Nhấp vào các từ ở dưới để bắt đầu ghép...</p>
-                    `;
-                }
-            };
-            container.appendChild(wordBtn);
-        }
-
-        function resetCurrentSentence() {
-            initSentenceQuestion();
-        }
-
-        function checkSentenceResult() {
-            const q = sentenceQuestions[currentSentenceIndex];
-            const resultSentence = assembledWords.map(w => w.text).join('');
-
-            const fb = document.getElementById('sentence-feedback');
-            fb.classList.remove('hidden');
-
-            if (resultSentence === q.correctSentence) {
-                incrementGlobalCorrect();
-                fb.className = "p-5 rounded-3xl bg-emerald-50 border border-emerald-100 text-emerald-800 space-y-2 mt-6";
-                fb.innerHTML = `
-                    <div class="flex items-center gap-2 font-black text-xs">
-                        <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i> CHÍNH XÁC! CÂU BẠN GHÉP RẤT HOÀN HẢO.
-                    </div>
-                    <div class="bg-white rounded-2xl p-4 border border-emerald-100 mt-2">
-                        <p class="text-lg font-black text-slate-800 chinese-font tracking-wide">${q.correctSentence}</p>
-                        <p class="text-xs text-slate-500 italic font-semibold mt-1">${q.pinyin}</p>
-                    </div>
-                    <p class="text-[11px] font-bold text-slate-500 italic pl-2 border-l-2 border-slate-300 mt-2">${q.explanation}</p>
-                `;
-                speakChinese(q.correctSentence);
-                showCustomToast("Chính xác", "Cú pháp câu hoàn toàn chính xác!", "success");
-            } else {
-                fb.className = "p-5 rounded-3xl bg-rose-50 border border-rose-100 text-rose-800 space-y-2 mt-6";
-                fb.innerHTML = `
-                    <div class="flex items-center gap-2 font-black text-xs">
-                        <i class="fa-solid fa-circle-xmark text-rose-600 text-sm"></i> CÂU CỦA BẠN CHƯA CHÍNH XÁC RỒI!
-                    </div>
-                    <p class="text-xs font-bold text-rose-700">Hãy nhấn "Làm lại" để sắp xếp lại đúng cấu trúc.</p>
-                    <div class="bg-white rounded-2xl p-4 border border-rose-100 mt-2">
-                        <p class="text-xs text-slate-400 font-bold">Đáp án chuẩn:</p>
-                        <p class="text-lg font-black text-slate-800 chinese-font tracking-wide">${q.correctSentence}</p>
-                        <p class="text-xs text-slate-500 italic font-semibold mt-1">${q.pinyin}</p>
-                    </div>
-                `;
-                showCustomToast("Chưa đúng", "Hãy ghép lại các từ", "error");
-            }
-
-            // Lock Submit
-            const submitBtn = document.getElementById('btn-sentence-submit');
-            submitBtn.disabled = true;
-            submitBtn.className = "px-5 py-3 bg-slate-200 text-slate-400 rounded-xl text-xs font-bold cursor-not-allowed";
-
-            // Unlock Next
-            const nextBtn = document.getElementById('btn-sentence-next');
-            nextBtn.removeAttribute('disabled');
-            nextBtn.className = "px-5 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md flex items-center gap-2 cursor-pointer active:scale-95";
-        }
-
-        function nextSentenceQuestion() {
-            currentSentenceIndex++;
-            if (currentSentenceIndex < sentenceQuestions.length) {
-                initSentenceQuestion();
-            } else {
-                showCustomToast("Chúc mừng!", "Bạn đã vượt qua Thử thách Sắp xếp câu!", "success");
-                changeMenuTab('translate');
-            }
-        }
-
-        // ================= TAB 4: DỊCH VIỆT - TRUNG LOGIC =================
-        function initTranslateQuestion() {
-            const q = translateQuestions[currentTranslateIndex];
-            
-            document.getElementById('translate-progress').innerText = `Câu ${currentTranslateIndex + 1} / ${translateQuestions.length}`;
-            document.getElementById('translate-progress-bar').style.width = `${((currentTranslateIndex + 1) / translateQuestions.length) * 100}%`;
-            document.getElementById('translate-prompt-vi').innerText = q.viPrompt;
-            document.getElementById('translate-user-input').value = '';
-            document.getElementById('translate-feedback').classList.add('hidden');
-
-            // Reset buttons
-            const nextBtn = document.getElementById('btn-translate-next');
-            nextBtn.disabled = true;
-            nextBtn.className = "px-5 py-3 bg-slate-800 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md flex items-center gap-2 cursor-not-allowed opacity-50";
-
-            const submitBtn = document.getElementById('btn-translate-submit');
-            submitBtn.disabled = false;
-            submitBtn.className = "px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-xs font-bold transition shadow-md cursor-pointer";
-        }
-
-        function checkTranslationResult() {
-            const q = translateQuestions[currentTranslateIndex];
-            const userStr = document.getElementById('translate-user-input').value.trim().replace(/\s+/g, '');
-
-            if (!userStr) {
-                showCustomToast("Chú ý", "Vui lòng nhập bài dịch của bạn!", "error");
-                return;
-            }
-
-            const fb = document.getElementById('translate-feedback');
-            fb.classList.remove('hidden');
-
-            // Thuật toán kiểm tra từ khóa cốt lõi (Bản dịch có thể linh động)
-            let matchCount = 0;
-            q.keyKeywords.forEach(kw => {
-                if (userStr.includes(kw)) {
-                    matchCount++;
-                }
-            });
-
-            // Nếu câu của người dùng khớp hoàn toàn hoặc trúng từ khóa
-            const isPerfect = userStr === q.modelZh.replace(/\s+/g, '');
-            const hasKeywords = matchCount === q.keyKeywords.length;
-
-            if (isPerfect || hasKeywords) {
-                incrementGlobalCorrect();
-                fb.className = "p-5 rounded-3xl bg-emerald-50 border border-emerald-100 text-emerald-800 space-y-3 mt-6";
-                fb.innerHTML = `
-                    <div class="flex items-center gap-2 font-black text-xs">
-                        <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i> DỊCH RẤT TỐT! ĐÃ SỬ DỤNG ĐÚNG BỔ NGỮ.
-                    </div>
-                    <div class="bg-white rounded-2xl p-4 border border-emerald-100">
-                        <p class="text-[10px] text-slate-400 font-bold uppercase">Bản dịch của bạn:</p>
-                        <p class="text-base font-bold text-emerald-700 chinese-font mt-0.5">${userStr}</p>
-                        
-                        <p class="text-[10px] text-slate-400 font-bold uppercase mt-3">Đáp án gợi ý của thầy cô:</p>
-                        <p class="text-lg font-black text-slate-800 chinese-font mt-0.5">${q.modelZh}</p>
-                        <p class="text-xs text-slate-500 italic font-semibold mt-0.5">${q.pinyin}</p>
-                    </div>
-                    <p class="text-[11px] text-slate-500 pl-2.5 border-l-2 border-emerald-300 font-semibold">${q.explanation}</p>
-                `;
-                speakChinese(q.modelZh);
-                showCustomToast("Xuất sắc", "Bài dịch đúng trọng tâm ngữ pháp!", "success");
-            } else {
-                fb.className = "p-5 rounded-3xl bg-rose-50 border border-rose-100 text-rose-800 space-y-3 mt-6";
-                fb.innerHTML = `
-                    <div class="flex items-center gap-2 font-black text-xs">
-                        <i class="fa-solid fa-triangle-exclamation text-rose-500 text-sm"></i> CHƯA ĐẠT CHUẨN BỔ NGỮ!
-                    </div>
-                    <div class="bg-white rounded-2xl p-4 border border-rose-100">
-                        <p class="text-[10px] text-slate-400 font-bold uppercase">Bản dịch của bạn:</p>
-                        <p class="text-base font-bold text-rose-600 chinese-font mt-0.5">${userStr}</p>
-                        
-                        <p class="text-[10px] text-slate-400 font-bold uppercase mt-3">Đáp án gợi ý của thầy cô:</p>
-                        <p class="text-lg font-black text-slate-800 chinese-font mt-0.5">${q.modelZh}</p>
-                        <p class="text-xs text-slate-500 italic font-semibold mt-0.5">${q.pinyin}</p>
-                    </div>
-                    <p class="text-[11px] text-rose-700 pl-2.5 border-l-2 border-rose-300 font-semibold">
-                        Hãy đối chiếu xem bạn có thiếu các từ khóa này không: <strong>${q.keyKeywords.join(', ')}</strong>.<br>
-                        ${q.explanation}
-                    </p>
-                `;
-                showCustomToast("Xem lại bài làm", "Chưa khớp bổ ngữ yêu cầu", "error");
-            }
-
-            // Lock Submit
-            const submitBtn = document.getElementById('btn-translate-submit');
-            submitBtn.disabled = true;
-            submitBtn.className = "px-5 py-3 bg-slate-200 text-slate-400 rounded-xl text-xs font-bold cursor-not-allowed";
-
-            // Unlock Next
-            const nextBtn = document.getElementById('btn-translate-next');
-            nextBtn.removeAttribute('disabled');
-            nextBtn.className = "px-5 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-all duration-300 shadow-md flex items-center gap-2 cursor-pointer active:scale-95";
-        }
-
-        function nextTranslateQuestion() {
-            currentTranslateIndex++;
-            if (currentTranslateIndex < translateQuestions.length) {
-                initTranslateQuestion();
-            } else {
-                showCustomToast("Hoàn thành!", "Bạn đã vượt qua thử thách Dịch thuật!", "success");
-                changeMenuTab('paragraph');
-            }
-        }
-
-        // ================= TAB 5: VIẾT ĐOẠN VĂN AI LOGIC =================
-        function updateCharCount() {
-            const txt = document.getElementById('ai-user-paragraph').value;
-            document.getElementById('char-counter').innerText = `${txt.length} ký tự`;
-        }
-
-        async function sendParagraphToAI() {
-            const userParagraph = document.getElementById('ai-user-paragraph').value.trim();
-            if (!userParagraph) {
-                showCustomToast("Thiếu nội dung", "Vui lòng viết đoạn văn bằng tiếng Trung trước khi gửi!", "error");
-                return;
-            }
-
-            const btn = document.getElementById('btn-submit-ai');
-            const loading = document.getElementById('ai-loading-container');
-            const responseContainer = document.getElementById('ai-response-container');
-
-            // Trạng thái Loading
-            btn.disabled = true;
-            btn.className = "w-full sm:w-auto px-6 py-3.5 bg-slate-200 text-slate-400 font-bold rounded-xl text-xs cursor-not-allowed flex items-center justify-center gap-2";
-            loading.classList.remove('hidden');
-            responseContainer.classList.add('hidden');
-
-            const systemPrompt = `
-                Bạn là một Giáo viên dạy Tiếng Trung bản xứ lão luyện, có kinh nghiệm sửa ngữ pháp cho học sinh Việt Nam.
-                Học sinh vừa viết một đoạn văn ngắn về chủ đề "Một ngày đi du lịch hoặc học tập" với yêu cầu sử dụng các loại Bổ ngữ (Bổ ngữ kết quả, bổ ngữ xu hướng, bổ ngữ trạng thái, bổ ngữ khả năng, bổ ngữ thời lượng...).
-                Nhiệm vụ của bạn:
-                1. Đọc và nhận xét toàn diện về đoạn văn (Độ mạch lạc, lỗi chính tả).
-                2. Phân tích chi tiết ngữ pháp bổ ngữ: chỉ ra học sinh đã sử dụng đúng loại bổ ngữ nào, gạch chân bổ ngữ đó, giải thích vì sao đúng.
-                3. Nếu học sinh dùng sai bổ ngữ hoặc viết sai ngữ pháp, hãy sửa lại một cách trực quan bằng tiếng Việt kèm chữ Hán chuẩn.
-                4. Cung cấp một bản viết lại gợi ý hay hơn nếu cần.
-                Hãy định dạng câu trả lời bằng Markdown sạch sẽ, chia các đầu mục rõ ràng bằng tiếng Việt thân thiện, dễ mến.
-            `;
-
-            const apiKey = ""; // Canvas tự động cung cấp ở runtime
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: `Đoạn văn của học sinh:\n"${userParagraph}"` }] }],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                }
-            };
-
-            // Thực hiện thử thách gọi API với Cơ chế Exponential Backoff
-            let delay = 1000;
-            let success = false;
-            let result = null;
-
-            for (let attempt = 0; attempt < 3; attempt++) {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    
-                    if (response.ok) {
-                        result = await response.json();
-                        success = true;
-                        break;
+                        // Tô đậm chữ cái đầu tiên
+                        btn.innerHTML = `<span class="text-base">${cell[0]}</span><span class="opacity-80 font-medium">${cell.slice(1)}</span>`;
+                        td.appendChild(btn);
+                    } else {
+                        td.className += " bg-slate-50/40";
                     }
-                } catch (err) {
-                    // Không log ra console để tuân thủ quy định
-                }
-                await new Promise(resolve => setTimeout(resolve, delay));
-                delay *= 2;
-            }
-
-            // Tắt Trạng thái loading
-            loading.classList.add('hidden');
-            btn.disabled = false;
-            btn.className = "w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-rose-500 to-indigo-600 hover:from-rose-600 hover:to-indigo-700 text-white font-extrabold rounded-xl text-xs transition duration-300 shadow-lg shadow-indigo-100 flex items-center justify-center gap-2 active:scale-95";
-
-            if (success && result?.candidates?.[0]?.content?.parts?.[0]?.text) {
-                const text = result.candidates[0].content.parts[0].text;
-                responseContainer.classList.remove('hidden');
-                
-                // Render Markdown thủ công đơn giản để không bị dính thư viện ngoài
-                document.getElementById('ai-feedback-box').innerHTML = formatMarkdown(text);
-                showCustomToast("Đã phân tích xong", "Nhận xét của giáo viên AI đã sẵn sàng!", "success");
-            } else {
-                showCustomToast("Lỗi kết nối", "Hệ thống AI bận hoặc mất mạng, vui lòng thử lại sau!", "error");
-            }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
         }
 
-        // Định dạng Markdown đơn giản cho dễ đọc trong giao diện HTML
-        function formatMarkdown(text) {
-            return text
-                .replace(/\n\n/g, '<br><br>')
-                .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/### (.*?)(?:<br>|$)/g, '<h5 class="text-sm font-extrabold text-indigo-700 mt-4 mb-2 flex items-center gap-1"><i class="fa-solid fa-hashtag text-xs opacity-50"></i> $1</h5>')
-                .replace(/## (.*?)(?:<br>|$)/g, '<h4 class="text-base font-black text-slate-800 mt-5 mb-2 pb-1 border-b border-slate-100">$1</h4>')
-                .replace(/# (.*?)(?:<br>|$)/g, '<h3 class="text-lg font-black text-slate-900 mt-6 mb-3">$1</h3>')
-                .replace(/`([^`]+)`/g, '<code class="px-2 py-0.5 bg-rose-50 text-rose-600 font-bold rounded chinese-font">$1</code>');
+        // Dựng danh sách từ ghép song âm tiết (2 cột cân đối)
+        function buildCompounds() {
+            const leftCol = document.getElementById('compound-col-left');
+            const rightCol = document.getElementById('compound-col-right');
+
+            leftCol.innerHTML = '';
+            rightCol.innerHTML = '';
+
+            // Render Cột trái
+            compoundWordsLeft.forEach(word => {
+                const btn = document.createElement('button');
+                btn.onclick = () => speak(word);
+                btn.className = "pinyin-btn w-full max-w-[160px] py-3 px-4 bg-white border border-slate-200 rounded-xl text-center font-bold text-slate-800 text-base shadow-sm tracking-wider";
+                btn.innerText = word;
+                leftCol.appendChild(btn);
+            });
+
+            // Render Cột phải
+            compoundWordsRight.forEach(word => {
+                const btn = document.createElement('button');
+                btn.onclick = () => speak(word);
+                btn.className = "pinyin-btn w-full max-w-[160px] py-3 px-4 bg-white border border-slate-200 rounded-xl text-center font-bold text-slate-800 text-base shadow-sm tracking-wider";
+                btn.innerText = word;
+                rightCol.appendChild(btn);
+            });
         }
 
-        window.onload = function () {
-            // Nạp lý thuyết ngữ pháp
-            renderGrammarAccordion();
+        // HỆ THỐNG THẺ PHẢN XẠ (FLASHCARDS)
+        let deck = [];
+        let deckIndex = 0;
+        let passCount = 0;
+        let failCount = 0;
+
+        function initFlashcards() {
+            // Gom tất cả các âm đơn trong bảng và âm ghép để học sinh tráo ngẫu nhiên
+            const singles = pinyinMatrix.flat().filter(Boolean);
+            const compounds = [...compoundWordsLeft, ...compoundWordsRight];
+            deck = [...singles, ...compounds];
             
-            // Kích hoạt nạp thử giọng để trình duyệt không bị trễ tiếng khi phát âm
+            // Tráo bài ngẫu nhiên
+            deck.sort(() => Math.random() - 0.5);
+            deckIndex = 0;
+            passCount = 0;
+            failCount = 0;
+
+            document.getElementById('stat-passed').innerText = passCount;
+            document.getElementById('stat-retry').innerText = failCount;
+
+            renderCard();
+        }
+
+        function renderCard() {
+            if (deck.length === 0) return;
+            const word = deck[deckIndex];
+            const displayElement = document.getElementById('flashcard-syllable');
+            displayElement.innerText = word;
+            
+            const isGreen = greenInitials.some(prefix => word.startsWith(prefix));
+            if (isGreen) {
+                displayElement.className = "text-5xl md:text-6xl font-black tracking-wide text-emerald-600 transition-all duration-300 hover:scale-110 cursor-pointer select-none";
+            } else {
+                displayElement.className = "text-5xl md:text-6xl font-black tracking-wide text-slate-800 transition-all duration-300 hover:scale-110 cursor-pointer select-none";
+            }
+            
+            displayElement.onclick = () => speak(word);
+            document.getElementById('flashcard-counter').innerText = `Thẻ ${deckIndex + 1} / ${deck.length}`;
+        }
+
+        function speakCurrentFlashcard() {
+            speak(deck[deckIndex]);
+        }
+
+        function nextFlashcard() {
+            deckIndex = (deckIndex + 1) % deck.length;
+            renderCard();
+        }
+
+        function markFlashcard(isPass) {
+            if (isPass) {
+                passCount++;
+                document.getElementById('stat-passed').innerText = passCount;
+                showToast("Quá tuyệt vời! Chúc mừng em!", "success");
+            } else {
+                failCount++;
+                document.getElementById('stat-retry').innerText = failCount;
+                showToast("Không sao cả, hãy nghe mẫu rồi thử lại nhé!", "info");
+            }
+            nextFlashcard();
+        }
+
+        // LOGIC GHI ÂM (MEDIA RECORDER)
+        let recorder = null;
+        let pieces = [];
+        let stateRecord = false;
+        let recordingUrl = null;
+
+        async function toggleRecording() {
+            const btn = document.getElementById('btn-record');
+            const txt = document.getElementById('record-text');
+            const icon = document.getElementById('record-icon-class');
+            const bars = document.getElementById('recording-status');
+
+            if (!stateRecord) {
+                try {
+                    const microphone = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    recorder = new MediaRecorder(microphone);
+                    pieces = [];
+
+                    recorder.ondataavailable = e => {
+                        if (e.data.size > 0) {
+                            pieces.push(e.data);
+                        }
+                    };
+
+                    recorder.onstop = () => {
+                        const audioBlob = new Blob(pieces, { type: 'audio/wav' });
+                        recordingUrl = URL.createObjectURL(audioBlob);
+                        
+                        const playBtn = document.getElementById('btn-play');
+                        playBtn.removeAttribute('disabled');
+                        playBtn.className = "flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs transition cursor-pointer shadow-lg shadow-emerald-900/10 active:scale-95";
+                        showToast("Đã lưu giọng đọc thành công! Nhấn 'Nghe giọng mình' để so sánh mẫu.", "success");
+                    };
+
+                    recorder.start();
+                    stateRecord = true;
+                    txt.innerText = "Dừng ghi";
+                    icon.className = "fa-solid fa-square-phone animate-pulse text-lg";
+                    bars.classList.remove('hidden');
+
+                } catch (error) {
+                    showToast("Cần cấp quyền truy cập Microphone trên thiết bị để thực hiện ghi âm!", "error");
+                    console.error("Không mở được mic:", error);
+                }
+            } else {
+                if (recorder) {
+                    recorder.stop();
+                    recorder.stream.getTracks().forEach(track => track.stop());
+                }
+                stateRecord = false;
+                txt.innerText = "Ghi âm ngay";
+                icon.className = "fa-solid fa-microphone";
+                bars.classList.add('hidden');
+            }
+        }
+
+        function playRecording() {
+            if (recordingUrl) {
+                const audio = new Audio(recordingUrl);
+                audio.play();
+                showToast("Đang phát lại bài đọc của bạn...", "info");
+            }
+        }
+
+        // Tự động khởi chạy bộ nạp thông tin lúc trang được kích hoạt
+        window.onload = function() {
+            buildGrid();
+            buildCompounds();
+            
+            // Kích hoạt nạp thử giọng để tránh trễ giọng khi bấm nút lần đầu tiên
             window.speechSynthesis.getVoices();
         }
     </script>
